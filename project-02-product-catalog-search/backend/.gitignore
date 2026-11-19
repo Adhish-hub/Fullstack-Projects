@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+coverage/
+
+
+//6afd47202c82d76b4997519b
