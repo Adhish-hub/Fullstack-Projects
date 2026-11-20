@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { MemoryRouter } from "react-router-dom";
+
 import ProductsPage from "./ProductsPage";
 import { getProducts } from "../services/products.service";
 import type { ProductsResponse, Product } from "../types/product";
@@ -48,7 +50,9 @@ function renderProductsPage() {
 
   return render(
     <QueryClientProvider client={queryClient}>
-      <ProductsPage />
+      <MemoryRouter>
+        <ProductsPage />
+      </MemoryRouter>
     </QueryClientProvider>,
   );
 }
@@ -56,6 +60,7 @@ function renderProductsPage() {
 describe("ProductsPage", () => {
   beforeEach(() => {
     mockedGetProducts.mockReset();
+    window.scrollTo = vi.fn();
   });
 
   afterEach(() => {
@@ -68,7 +73,9 @@ describe("ProductsPage", () => {
     renderProductsPage();
 
     expect(await screen.findByText("Wireless Headphones")).toBeInTheDocument();
-    expect(screen.getByText(/of 11 products/i)).toBeInTheDocument();
+    expect(screen.getByText("11").closest("p")).toHaveTextContent(
+      "Showing 1 of 11 products",
+    );
   });
 
   it("displays the empty state when the service returns no products", async () => {
